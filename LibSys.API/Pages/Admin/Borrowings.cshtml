@@ -1,0 +1,84 @@
+@page
+@model LibSys.API.Pages.Admin.AdminBorrowingsModel
+@{
+    ViewData["Title"] = "จัดการการยืม";
+    ViewData["ActivePage"] = "Admin";
+}
+
+<div class="main-content">
+    <div class="section-header" style="margin-bottom:1.5rem">
+        <h1 style="font-size:18px;font-weight:500"><i class="ti ti-list"></i> จัดการการยืม-คืน</h1>
+        <a href="/Admin" class="btn btn-secondary btn-sm">
+            <i class="ti ti-arrow-left"></i> กลับ
+        </a>
+    </div>
+
+    @if (Model.SuccessMessage != null)
+    {
+        <div class="alert alert-success">@Model.SuccessMessage</div>
+    }
+
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>สมาชิก</th>
+                    <th>หนังสือ</th>
+                    <th>วันที่ยืม</th>
+                    <th>วันครบกำหนด</th>
+                    <th>สถานะ</th>
+                    <th>จัดการ</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var b in Model.Borrowings)
+                {
+                    <tr>
+                        <td>@b.UserName</td>
+                        <td style="font-weight:500">@b.BookTitle</td>
+                        <td>@b.BorrowedAt.ToString("dd MMM yyyy")</td>
+                        <td>
+                            @b.DueDate.ToString("dd MMM yyyy")
+                            @if (b.Status == "Active" && b.DueDate < DateTime.UtcNow)
+                            {
+                                <span class="badge badge-danger" style="margin-left:4px">เกิน</span>
+                            }
+                        </td>
+                        <td>
+                            @if (b.Status == "Active")
+                            {
+                                <span class="badge badge-success">กำลังยืม</span>
+                            }
+                            else if (b.Status == "Returned")
+                            {
+                                <span class="badge"
+                                      style="background:var(--bg-main);color:var(--text-secondary);border:0.5px solid var(--border)">คืนแล้ว</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-danger">เกินกำหนด</span>
+                            }
+                        </td>
+                        <td>
+                            @if (b.Status == "Active")
+                            {
+                                <form method="post" asp-page-handler="Return" style="display:inline">
+                                    <input type="hidden" name="borrowingId" value="@b.Id" />
+                                    <button type="submit" class="btn btn-secondary btn-sm">
+                                        <i class="ti ti-check"></i> รับคืน
+                                    </button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (!Model.Borrowings.Any())
+        {
+            <div style="text-align:center;padding:2.5rem;color:var(--text-muted)">
+                <p>ไม่มีรายการยืม</p>
+            </div>
+        }
+    </div>
+</div>

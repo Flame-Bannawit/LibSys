@@ -1,0 +1,97 @@
+@page
+@model LibSys.API.Pages.Admin.AdminBooksModel
+@{
+    ViewData["Title"] = "จัดการหนังสือ";
+    ViewData["ActivePage"] = "Admin";
+}
+
+<div class="main-content">
+    <div class="section-header" style="margin-bottom:1.5rem">
+        <h1 style="font-size:18px;font-weight:500"><i class="ti ti-books"></i> จัดการหนังสือ</h1>
+        <a href="/Admin" class="btn btn-secondary btn-sm"><i class="ti ti-arrow-left"></i> กลับ</a>
+    </div>
+
+    @if (Model.SuccessMessage != null)
+    {
+        <div class="alert alert-success">@Model.SuccessMessage</div>
+    }
+    @if (Model.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+
+    <div class="card" style="margin-bottom:2rem">
+        <div class="card-title">➕ เพิ่มหนังสือใหม่</div>
+        <form method="post" asp-page-handler="Add">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                <div class="form-group">
+                    <label class="form-label">ชื่อหนังสือ</label>
+                    <input type="text" name="Title" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ผู้แต่ง</label>
+                    <input type="text" name="Author" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ISBN</label>
+                    <input type="text" name="ISBN" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">หมวดหมู่</label>
+                    <select name="Category" class="form-control">
+                        <option value="Programming">Programming</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="Science">Science</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">จำนวนเล่ม</label>
+                    <input type="number" name="TotalCopies" class="form-control" value="1" min="1" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">คำอธิบาย</label>
+                    <input type="text" name="Description" class="form-control" />
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top:0.5rem">
+                <i class="ti ti-plus"></i> เพิ่มหนังสือ
+            </button>
+        </form>
+    </div>
+
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ชื่อหนังสือ</th>
+                    <th>ผู้แต่ง</th>
+                    <th>หมวดหมู่</th>
+                    <th>คงเหลือ</th>
+                    <th>จัดการ</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var book in Model.Books)
+                {
+                    <tr>
+                        <td style="font-weight:500">@book.Title</td>
+                        <td>@book.Author</td>
+                        <td><span class="badge badge-warning">@book.Category</span></td>
+                        <td>@book.AvailableCopies / @book.TotalCopies</td>
+                        <td>
+                            <form method="post" asp-page-handler="Delete" style="display:inline"
+                                  onsubmit="return confirm('ลบหนังสือนี้?')">
+                                <input type="hidden" name="bookId" value="@book.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="ti ti-trash"></i> ลบ
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

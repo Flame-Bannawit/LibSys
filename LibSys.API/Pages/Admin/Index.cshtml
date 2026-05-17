@@ -1,0 +1,91 @@
+@page
+@model LibSys.API.Pages.Admin.AdminIndexModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    ViewData["ActivePage"] = "Admin";
+}
+
+@using LibSys.API.DTOs
+
+<div class="main-content">
+    <div class="section-header" style="margin-bottom:1.5rem">
+        <h1 style="font-size:18px;font-weight:500"><i class="ti ti-settings"></i> Admin Dashboard</h1>
+    </div>
+
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="stat-label">หนังสือทั้งหมด</div>
+            <div class="stat-value">@(Model.Stats?.TotalBooks ?? 0)</div>
+            <div class="stat-sub">ในระบบ</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">การยืมที่ใช้งานอยู่</div>
+            <div class="stat-value">@(Model.Stats?.ActiveBorrowings ?? 0)</div>
+            <div class="stat-sub" style="color:var(--danger-text)">@(Model.Stats?.OverdueBorrowings ?? 0) เกินกำหนด
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">สมาชิกทั้งหมด</div>
+            <div class="stat-value">@(Model.Stats?.TotalMembers ?? 0)</div>
+            <div class="stat-sub">คน</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">การจองรออยู่</div>
+            <div class="stat-value">@(Model.Stats?.TotalReservations ?? 0)</div>
+            <div class="stat-sub">รายการ</div>
+        </div>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-bottom:2rem">
+        <a href="/Admin/Books" class="btn btn-primary">
+            <i class="ti ti-books"></i> จัดการหนังสือ
+        </a>
+        <a href="/Admin/Borrowings" class="btn btn-secondary">
+            <i class="ti ti-list"></i> จัดการการยืม
+        </a>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+        <div>
+            <div class="section-title" style="margin-bottom:1rem">📊 หนังสือยอดนิยม</div>
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>หนังสือ</th>
+                            <th>ยืมทั้งหมด</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var popularBooks = Model.Stats?.PopularBooks?.ToList() ?? new List<PopularBookDto>();
+                        }
+                        @foreach (var b in popularBooks)
+                        {
+                            <tr>
+                                <td>@b.Title</td>
+                                <td><span class="badge badge-success">@b.BorrowCount ครั้ง</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div>
+            <div class="section-title" style="margin-bottom:1rem">🕐 กิจกรรมล่าสุด</div>
+            <div class="table-wrap">
+                @{
+                    var activities = Model.Stats?.RecentActivities?.ToList() ?? new List<RecentActivityDto>();
+                }
+                @foreach (var a in activities)
+                {
+                    <div style="padding:10px 16px;border-bottom:0.5px solid var(--border);font-size:12px">
+                        <div style="color:var(--text-primary)">@a.Description</div>
+                        <div style="color:var(--text-muted);margin-top:2px">@a.Date.ToString("dd MMM HH:mm")</div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

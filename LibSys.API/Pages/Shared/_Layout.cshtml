@@ -1,0 +1,68 @@
+@{
+    var userName = Context.Session.GetString("UserName") ?? "";
+    var initials = userName.Length >= 2 ? userName.Substring(0, 2).ToUpper() : userName.ToUpper();
+}
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] — LibSys</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@@latest/tabler-icons.min.css" />
+</head>
+
+<body>
+    <nav class="navbar">
+        <a class="navbar-brand" href="/">Lib<span>Sys</span></a>
+
+        <ul class="navbar-nav">
+            <li><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Dashboard" ? "active" : "")" href="/">
+                <i class="ti ti-home"></i> Dashboard
+            </a></li>
+            <li><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Books" ? "active" : "")" href="/Books">
+                <i class="ti ti-book"></i> หนังสือ
+            </a></li>
+            <li><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "MyBorrowings" ? "active" : "")"
+                   href="/MyBorrowings">
+                <i class="ti ti-bookmark"></i> การยืมของฉัน
+            </a></li>
+            @if (Context.Session.GetString("UserRole") == "Admin")
+            {
+                <li><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Admin" ? "active" : "")" href="/Admin">
+                    <i class="ti ti-settings"></i> Admin
+                </a></li>
+            }
+        </ul>
+
+        <div style="display:flex;align-items:center;gap:12px">
+            @if (Context.Session.GetString("JWTToken") != null)
+            {
+                <span style="font-size:13px;color:var(--text-secondary)">@userName</span>
+                <div class="avatar">@initials</div>
+                <a href="/Logout" class="btn btn-secondary btn-sm">
+                    <i class="ti ti-logout"></i> ออกจากระบบ
+                </a>
+            }
+            else
+            {
+                <a href="/Login" class="btn btn-secondary btn-sm">เข้าสู่ระบบ</a>
+                <a href="/Register" class="btn btn-primary btn-sm">สมัครสมาชิก</a>
+            }
+        </div>
+    </nav>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <footer
+        style="text-align:center;padding:1.5rem;font-size:12px;color:var(--text-muted);border-top:0.5px solid var(--border);margin-top:3rem">
+        LibSys &copy; @DateTime.Now.Year — ระบบจัดการห้องสมุด
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

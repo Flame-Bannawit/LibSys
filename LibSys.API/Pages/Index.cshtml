@@ -1,0 +1,62 @@
+@page
+@model LibSys.API.Pages.IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+    ViewData["ActivePage"] = "Dashboard";
+}
+
+<div class="main-content">
+    <div class="section-header" style="margin-bottom:1.5rem">
+        <h1 style="font-size:18px;font-weight:500">📚 ยินดีต้อนรับสู่ LibSys</h1>
+    </div>
+
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="stat-label">หนังสือทั้งหมด</div>
+            <div class="stat-value">@(Model.Stats?.TotalBooks ?? 0)</div>
+            <div class="stat-sub">ในระบบ</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">การยืมที่ใช้งานอยู่</div>
+            <div class="stat-value">@(Model.Stats?.ActiveBorrowings ?? 0)</div>
+            <div class="stat-sub">@(Model.Stats?.OverdueBorrowings ?? 0) รายการเกินกำหนด</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">สมาชิกทั้งหมด</div>
+            <div class="stat-value">@(Model.Stats?.TotalMembers ?? 0)</div>
+            <div class="stat-sub">คน</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">การจอง</div>
+            <div class="stat-value">@(Model.Stats?.TotalReservations ?? 0)</div>
+            <div class="stat-sub">รอรับหนังสือ</div>
+        </div>
+    </div>
+
+    <div class="section-header">
+        <span class="section-title">หนังสือล่าสุด</span>
+        <a href="/Books" class="btn btn-secondary btn-sm">ดูทั้งหมด</a>
+    </div>
+
+    <div class="book-grid">
+        @foreach (var book in Model.Books)
+        {
+            <div class="book-card">
+                <div class="book-cover">📚</div>
+                <div class="book-title" title="@book.Title">@book.Title</div>
+                <div class="book-author">@book.Author</div>
+                <div class="book-footer">
+                    @if (book.AvailableCopies > 0)
+                    {
+                        <span class="badge badge-success">ว่าง @book.AvailableCopies</span>
+                    }
+                    else
+                    {
+                        <span class="badge badge-danger">ไม่ว่าง</span>
+                    }
+                    <a href="/Books/@book.Id" class="btn btn-secondary btn-sm">ดู</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>

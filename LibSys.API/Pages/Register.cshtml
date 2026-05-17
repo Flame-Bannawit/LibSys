@@ -1,0 +1,46 @@
+@page
+@model LibSys.API.Pages.RegisterModel
+@{
+    ViewData["Title"] = "สมัครสมาชิก";
+    Layout = "_Layout";
+}
+
+<div class="login-wrap">
+    <div class="login-card">
+        <div class="login-logo">Lib<span>Sys</span></div>
+        <p class="login-subtitle">สร้างบัญชีใหม่</p>
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="alert alert-danger">@Model.ErrorMessage</div>
+        }
+
+        <form method="post">
+            <div class="form-group">
+                <label class="form-label">ชื่อ-นามสกุล</label>
+                <input type="text" name="FullName" class="form-control" placeholder="กรอกชื่อ-นามสกุล" required />
+            </div>
+            <div class="form-group">
+                <label class="form-label">อีเมล</label>
+                <input type="email" name="Email" class="form-control" placeholder="email@example.com" required />
+            </div>
+            <div class="form-group">
+                <label class="form-label">รหัสนักศึกษา <span style="color:var(--text-muted)">(ถ้ามี)</span></label>
+                <input type="text" name="StudentId" class="form-control" placeholder="เช่น 6503260" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">รหัสผ่าน</label>
+                <input type="password" name="Password" class="form-control" placeholder="อย่างน้อย 6 ตัวอักษร"
+                       required />
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:0.5rem">
+                <i class="ti ti-user-plus"></i> สมัครสมาชิก
+            </button>
+        </form>
+
+        <p style="text-align:center;margin-top:1.25rem;font-size:13px;color:var(--text-secondary)">
+            มีบัญชีแล้ว?
+            <a href="/Login" style="color:var(--gold);text-decoration:none;font-weight:500">เข้าสู่ระบบ</a>
+        </p>
+    </div>
+</div>

@@ -1,0 +1,66 @@
+@page
+@model LibSys.API.Pages.MyBorrowingsModel
+@{
+    ViewData["Title"] = "การยืมของฉัน";
+    ViewData["ActivePage"] = "MyBorrowings";
+}
+
+<div class="main-content">
+    <div class="section-header" style="margin-bottom:1.5rem">
+        <h1 style="font-size:18px;font-weight:500"><i class="ti ti-bookmark"></i> การยืมของฉัน</h1>
+    </div>
+
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>หนังสือ</th>
+                    <th>วันที่ยืม</th>
+                    <th>วันครบกำหนด</th>
+                    <th>วันคืน</th>
+                    <th>สถานะ</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var b in Model.Borrowings)
+                {
+                    <tr>
+                        <td style="font-weight:500">@b.BookTitle</td>
+                        <td>@b.BorrowedAt.ToString("dd MMM yyyy")</td>
+                        <td>
+                            @b.DueDate.ToString("dd MMM yyyy")
+                            @if (b.Status == "Active" && b.DueDate < DateTime.UtcNow)
+                            {
+                                <span class="badge badge-danger" style="margin-left:6px">เกินกำหนด</span>
+                            }
+                        </td>
+                        <td>@(b.ReturnedAt?.ToString("dd MMM yyyy") ?? "—")</td>
+                        <td>
+                            @if (b.Status == "Active")
+                            {
+                                <span class="badge badge-success">กำลังยืม</span>
+                            }
+                            else if (b.Status == "Returned")
+                            {
+                                <span class="badge"
+                                      style="background:var(--bg-main);color:var(--text-secondary);border:0.5px solid var(--border)">คืนแล้ว</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-danger">เกินกำหนด</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (!Model.Borrowings.Any())
+        {
+            <div style="text-align:center;padding:2.5rem;color:var(--text-muted)">
+                <div style="font-size:40px;margin-bottom:1rem">📋</div>
+                <p>ยังไม่มีรายการยืม</p>
+                <a href="/Books" class="btn btn-primary btn-sm" style="margin-top:1rem">ดูหนังสือ</a>
+            </div>
+        }
+    </div>
+</div>

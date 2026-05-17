@@ -1,0 +1,103 @@
+@page "/Books/{id:int}"
+@model LibSys.API.Pages.Books.BookDetailModel
+@{
+    ViewData["Title"] = Model.Book?.Title ?? "รายละเอียดหนังสือ";
+    ViewData["ActivePage"] = "Books";
+}
+
+<div class="main-content">
+    <a href="/Books" class="btn btn-secondary btn-sm" style="margin-bottom:1.5rem;display:inline-flex">
+        <i class="ti ti-arrow-left"></i> กลับ
+    </a>
+
+    @if (Model.Book != null)
+    {
+        <div style="display:grid;grid-template-columns:200px 1fr;gap:2rem;align-items:start">
+            <div class="book-cover" style="height:260px;font-size:64px;border-radius:12px">📚</div>
+
+            <div>
+                <h1 style="font-size:22px;font-weight:600;margin-bottom:0.5rem">@Model.Book.Title</h1>
+                <p style="font-size:15px;color:var(--text-secondary);margin-bottom:1rem">@Model.Book.Author</p>
+
+                <div style="display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap">
+                    <span class="badge badge-warning">@Model.Book.Category</span>
+                    @if (Model.Book.AvailableCopies > 0)
+                    {
+                        <span class="badge badge-success">ว่าง @Model.Book.AvailableCopies / @Model.Book.TotalCopies เล่ม</span>
+                    }
+                    else
+                    {
+                        <span class="badge badge-danger">ไม่ว่าง</span>
+                    }
+                </div>
+
+                <div class="card" style="margin-bottom:1.5rem">
+                    <table style="width:100%;font-size:13px">
+                        <tr>
+                            <td style="color:var(--text-secondary);padding:6px 0;width:120px">ISBN</td>
+                            <td style="padding:6px 0">@Model.Book.ISBN</td>
+                        </tr>
+                        <tr>
+                            <td style="color:var(--text-secondary);padding:6px 0">หมวดหมู่</td>
+                            <td style="padding:6px 0">@Model.Book.Category</td>
+                        </tr>
+                        <tr>
+                            <td style="color:var(--text-secondary);padding:6px 0">จำนวนทั้งหมด</td>
+                            <td style="padding:6px 0">@Model.Book.TotalCopies เล่ม</td>
+                        </tr>
+                        <tr>
+                            <td style="color:var(--text-secondary);padding:6px 0">คงเหลือ</td>
+                            <td style="padding:6px 0">@Model.Book.AvailableCopies เล่ม</td>
+                        </tr>
+                    </table>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.Book.Description))
+                {
+                    <p style="color:var(--text-secondary);font-size:13px;line-height:1.8;margin-bottom:1.5rem">
+                        @Model.Book.Description
+                    </p>
+                }
+
+                @if (Model.SuccessMessage != null)
+                {
+                    <div class="alert alert-success">@Model.SuccessMessage</div>
+                }
+                @if (Model.ErrorMessage != null)
+                {
+                    <div class="alert alert-danger">@Model.ErrorMessage</div>
+                }
+
+                @if (HttpContext.Session.GetString("JWTToken") != null)
+                {
+                    @if (Model.Book.AvailableCopies > 0)
+                    {
+                        <form method="post">
+                            <input type="hidden" name="bookId" value="@Model.Book.Id" />
+                            <button type="submit" class="btn btn-primary">
+                                <i class="ti ti-book"></i> ยืมหนังสือ (14 วัน)
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <button class="btn btn-secondary" disabled>ไม่มีหนังสือว่าง</button>
+                    }
+                }
+                else
+                {
+                    <a href="/Login" class="btn btn-primary">
+                        <i class="ti ti-login"></i> เข้าสู่ระบบเพื่อยืม
+                    </a>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div style="text-align:center;padding:3rem;color:var(--text-muted)">
+            <div style="font-size:48px;margin-bottom:1rem">📭</div>
+            <p>ไม่พบหนังสือนี้</p>
+        </div>
+    }
+</div>

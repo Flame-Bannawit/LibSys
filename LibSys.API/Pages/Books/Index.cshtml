@@ -1,0 +1,96 @@
+@page
+@model LibSys.API.Pages.Books.BooksIndexModel
+@{
+    ViewData["Title"] = "หนังสือทั้งหมด";
+    ViewData["ActivePage"] = "Books";
+}
+
+<div class="main-content">
+    <div class="section-header" style="margin-bottom:1.5rem">
+        <h1 style="font-size:18px;font-weight:500">📚 หนังสือทั้งหมด</h1>
+        @if (HttpContext.Session.GetString("UserRole") == "Admin")
+        {
+            <a href="/Admin/Books" class="btn btn-primary btn-sm">
+                <i class="ti ti-plus"></i> เพิ่มหนังสือ
+            </a>
+        }
+    </div>
+
+    <form method="get" class="search-bar">
+        <input type="text" name="search" value="@Model.Search" class="search-input"
+               placeholder="ค้นหาชื่อหนังสือ, ผู้แต่ง, ISBN..." />
+        <select name="category" class="form-control" style="width:180px">
+            <option value="">หมวดหมู่ทั้งหมด</option>
+            @if (Model.Category == "Programming")
+            {
+                <option value="Programming" selected>Programming</option>
+            }
+            else
+            {
+                <option value="Programming">Programming</option>
+            }
+            @if (Model.Category == "Computer Science")
+            {
+                <option value="Computer Science" selected>Computer Science</option>
+            }
+            else
+            {
+                <option value="Computer Science">Computer Science</option>
+            }
+            @if (Model.Category == "Mathematics")
+            {
+                <option value="Mathematics" selected>Mathematics</option>
+            }
+            else
+            {
+                <option value="Mathematics">Mathematics</option>
+            }
+        </select>
+        <button type="submit" class="btn btn-primary">
+            <i class="ti ti-search"></i> ค้นหา
+        </button>
+    </form>
+
+    @if (Model.Books.Any())
+    {
+        <div class="book-grid">
+            @foreach (var book in Model.Books)
+            {
+                <div class="book-card">
+                    <div class="book-cover">📚</div>
+                    <div class="book-title" title="@book.Title">@book.Title</div>
+                    <div class="book-author">@book.Author</div>
+                    <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">
+                        @book.Category • ISBN: @book.ISBN
+                    </div>
+                    <div class="book-footer">
+                        @if (book.AvailableCopies > 0)
+                        {
+                            <span class="badge badge-success">ว่าง @book.AvailableCopies เล่ม</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-danger">ไม่ว่าง</span>
+                        }
+                        <a href="/Books/@book.Id" class="btn btn-secondary btn-sm">ดูรายละเอียด</a>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="pagination">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <a href="?page=@i&search=@Model.Search&category=@Model.Category"
+                   class="page-btn @(i == Model.CurrentPage ? "active" : "")">@i</a>
+            }
+        </div>
+    }
+    else
+    {
+        <div style="text-align:center;padding:3rem;color:var(--text-muted)">
+            <div style="font-size:48px;margin-bottom:1rem">📭</div>
+            <p>ไม่พบหนังสือที่ค้นหา</p>
+        </div>
+    }
+</div>
